@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 void main() {
@@ -9,12 +10,8 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const BatteryApp(),
+    return const MaterialApp(
+      home: BatteryApp(),
     );
   }
 }
@@ -24,27 +21,39 @@ class BatteryApp extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final countState = useState<int>(0);
+    final batteryLevel = useState<String>('不明');
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+          children: [
             Text(
-              '${countState.value}',
+              batteryLevel.value,
               style: Theme.of(context).textTheme.headline4,
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () async {
+                batteryLevel.value = await _getBatteryLevel();
+              },
+              child: const Text('残りのバッテリーを取得'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => countState.value++,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
+  }
+}
+
+// バッテリー残量を取得し、String で返すメソッド
+Future<String> _getBatteryLevel() async {
+  // Flutter ←→ 各プラットフォーム間で使う、アプリ内で一意なチャネル名
+  const platform = MethodChannel('method.channel.app/battery');
+  try {
+    final result = await platform.invokeMethod('getBatteryLevel');
+    return result.toString();
+  } on PlatformException catch (e) {
+    return e.message!;
   }
 }

@@ -30,7 +30,7 @@ class BatteryApp extends HookWidget {
           children: [
             Text(
               batteryLevel.value,
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headline5,
             ),
             const SizedBox(height: 8),
             ElevatedButton(
@@ -53,7 +53,7 @@ Future<String> _getBatteryLevel() async {
   try {
     final result = await platform.invokeMethod('getBatteryLevel');
     return result.toString();
-  } on PlatformException catch (e) {
-    return e.message!;
+  } on Exception catch (e) {
+    return e.toString();
   }
 }

@@ -13,7 +13,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "method.channel.app/battery"
+    private val CHANNEL = "com.example.app/battery"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

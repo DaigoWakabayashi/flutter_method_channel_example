@@ -22,7 +22,6 @@ class BatteryApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final batteryLevel = useState<String>('不明');
-
     return Scaffold(
       body: Center(
         child: Column(
@@ -48,10 +47,10 @@ class BatteryApp extends HookWidget {
 
 // バッテリー残量を取得し、String で返すメソッド
 Future<String> _getBatteryLevel() async {
-  // Flutter ←→ 各プラットフォーム間で使う、アプリ内で一意なチャネル名
-  const platform = MethodChannel('method.channel.app/battery');
+  // アプリ内で一意なチャネル名（「アプリパッケージ名/チャンネル名」とするのが慣例）
+  const methodChannel = MethodChannel('com.example.app/battery');
   try {
-    final result = await platform.invokeMethod('getBatteryLevel');
+    final result = await methodChannel.invokeMethod('getBatteryLevel');
     return result.toString();
   } on Exception catch (e) {
     return e.toString();
